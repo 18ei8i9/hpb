@@ -12,7 +12,9 @@ body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   color: var(--text);
-  background: #081018;
+  background-image: url(../imagenes/cuerpo.jpg), linear-gradient(120deg, #17202a, #37475b);
+  background-size: cover;
+  background-position: center;
 }
 
 .container {
