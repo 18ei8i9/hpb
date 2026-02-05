@@ -1,0 +1,29 @@
+# Hotel Puerto Bandera - Sitio web
+
+Sitio estático (HTML, CSS y JS) para presentar información del hotel, habitaciones, ubicación en mapa y chatbot preparado para integrar webhook.
+
+## Estructura
+- `index.html`: contenido principal del sitio.
+- `estilos/estilos.css`: estilos visuales y responsive.
+- `estilos/script/codigo.js`: interacción de habitaciones y chatbot.
+
+## Imágenes
+Para usar exactamente las fotos adjuntas del hotel, guardalas en la carpeta `imagenes/` con estos nombres:
+- `frente.jpg` (fondo principal del hero)
+- `habitacion-doble.jpg`
+- `habitacion-matrimonial.jpg`
+- `habitacion-triple.jpg`
+- `Logo.png` (logo del hotel)
+
+## Chatbot
+En `estilos/script/codigo.js`, configurá:
+
+```js
+const CHAT_WEBHOOK_URL = 'https://tu-webhook-aqui';
+```
+
+## Publicar en Git
+```bash
+git add .
+git commit -m "Crear sitio web Hotel Puerto Bandera"
+git push
