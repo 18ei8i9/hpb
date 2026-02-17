@@ -36,7 +36,7 @@ roomButtons.forEach((button) => {
 
 // Chatbot (placeholder)
 // Cuando tengas tu webhook, reemplazá este valor.
-const CHAT_WEBHOOK_URL = 'https://chatboothpb-production.up.railway.app/webhook/3d6ca3d4-b253-424f-8e2c-66c0a0e5daa2/chat';
+const CHAT_WEBHOOK_URL = "https://chatboothpb-production.up.railway.app/webhook/hotel-chat";
 
 const chatToggle = document.getElementById('chat-toggle');
 const chatBox = document.getElementById('chatbot');
