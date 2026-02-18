@@ -36,7 +36,7 @@ roomButtons.forEach((button) => {
 
 // Chatbot (placeholder)
 // Cuando tengas tu webhook, reemplazá este valor.
-const CHAT_WEBHOOK_URL = "https://chatboothpb-production.up.railway.app/webhook/hotel-chat";
+const CHAT_WEBHOOK_URL = "https://https://script.google.com/macros/s/AKfycbzlsKCzwmzMX6PJNuVbo3_qOES2BcbpmKKvobPgErDxqL-OHCJMx64qdIIGqjyzBT8TVA/exec-production.up.railway.app/webhook/hotel-chat";
 
 const chatToggle = document.getElementById('chat-toggle');
 const chatBox = document.getElementById('chatbot');
@@ -73,7 +73,15 @@ chatForm.addEventListener('submit', async (e) => {
     const res = await fetch(CHAT_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({
+        nombre: "Nombre del cliente",
+        email: "email@email.com",
+        checkin: "2026-02-20",
+        checkout: "2026-02-22",
+        personas: 2,
+        interesReal: true
+        })
+
     });
 
     if (!res.ok) throw new Error('Error en respuesta del webhook');
