@@ -36,15 +36,15 @@ roomButtons.forEach((button) => {
 
 // Chatbot (placeholder)
 // Cuando tengas tu webhook, reemplazá este valor.
-const CHAT_WEBHOOK_URL = "https://https://script.google.com/macros/s/AKfycbzlsKCzwmzMX6PJNuVbo3_qOES2BcbpmKKvobPgErDxqL-OHCJMx64qdIIGqjyzBT8TVA/exec-production.up.railway.app/webhook/hotel-chat";
+const CHAT_WEBHOOK_URL = "https://public.whaticket.com/widget/production/wtt-widget-default.js";
 
-const chatToggle = document.getElementById('chat-toggle');
+/*const chatToggle = document.getElementById('chat-toggle');
 const chatBox = document.getElementById('chatbot');
 const chatClose = document.getElementById('chat-close');
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const chatMessages = document.getElementById('chat-messages');
-
+*/
 chatToggle.addEventListener('click', () => chatBox.classList.toggle('hidden'));
 chatClose.addEventListener('click', () => chatBox.classList.add('hidden'));
 
