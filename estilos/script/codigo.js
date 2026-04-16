@@ -36,9 +36,9 @@ roomButtons.forEach((button) => {
 
 // Chatbot (placeholder)
 // Cuando tengas tu webhook, reemplazá este valor.
-const CHAT_WEBHOOK_URL = "https://public.whaticket.com/widget/production/wtt-widget-default.js";
+/*const CHAT_WEBHOOK_URL = "https://public.whaticket.com/widget/production/wtt-widget-default.js";
 
-/*const chatToggle = document.getElementById('chat-toggle');
+const chatToggle = document.getElementById('chat-toggle');
 const chatBox = document.getElementById('chatbot');
 const chatClose = document.getElementById('chat-close');
 const chatForm = document.getElementById('chat-form');
@@ -55,7 +55,7 @@ function appendMessage(type, text) {
   chatMessages.appendChild(p);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
+/*
 chatForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
@@ -91,4 +91,4 @@ chatForm.addEventListener('submit', async (e) => {
   } catch (err) {
     appendMessage('bot', 'No pude conectar con el asistente en este momento.');
   }
-});
+});*/

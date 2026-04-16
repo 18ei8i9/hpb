@@ -8,7 +8,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilos/estilos.css">
-  
+  <script>
+  window.WTT_API = {
+    config: {
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOiJmZjY3MDczOS0yYzNiLTRmNDMtYjgzOC05Yzk3YmM2YTJmMzUiLCJjb25uZWN0aW9uSWQiOiI1NmI3NzQxYS1iZDUwLTRhMWEtYmQ5YS01ZDdhMWMyODczZTgiLCJpYXQiOjE3NzYzMzY0NDB9.TT8GGBASBb9LVcJmtP_Lm-4PIAFGJ4Ri0jEsDJ-Q2t0",
+      title: "¡Bienvenido al soporte!", // a title to be presented on the widget
+      subtitle: "¿Cómo podemos ayudar?", // (optional) a subtitle to be presented on the widget
+      position: "left", // (optional) values: left or right / default: left
+      initialMessages: ["Hola, ¿cómo podemos ayudarte?"], // (optional) values: an array of messages to be shown when the contact open the widget for the first time
+      toggleButtonEnabled: true, // (optional) enables a toggle button that opens/close the widget
+      toggleButtonBgColor: "#42a5f5", // (optional) the html background color of the entire chat widget
+      isAudioEnabled: false // enable the option to the widget user send audio messages
+    }
+    // You can contact our Support team for more advanced configurations.
+  };
+  </script>
+  <script async crossorigin="*" src="https://public.whaticket.com/widget/production/wtt-widget-default.js"></script>
 </head>
 <body>
   <header class="hero">
