@@ -55,8 +55,7 @@ function appendMessage(type, text) {
   chatMessages.appendChild(p);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-/*
-chatForm.addEventListener('submit', async (e) => {
+atForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
   if (!text) return;
@@ -91,4 +90,4 @@ chatForm.addEventListener('submit', async (e) => {
   } catch (err) {
     appendMessage('bot', 'No pude conectar con el asistente en este momento.');
   }
-});*/
+});
