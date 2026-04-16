@@ -37,7 +37,7 @@ roomButtons.forEach((button) => {
 // Chatbot (placeholder)
 // Cuando tengas tu webhook, reemplazá este valor.
 /*const CHAT_WEBHOOK_URL = "https://public.whaticket.com/widget/production/wtt-widget-default.js";*/
-
+/*
 const chatToggle = document.getElementById('chat-toggle');
 const chatBox = document.getElementById('chatbot');
 const chatClose = document.getElementById('chat-close');
@@ -90,4 +90,4 @@ atForm.addEventListener('submit', async (e) => {
   } catch (err) {
     appendMessage('bot', 'No pude conectar con el asistente en este momento.');
   }
-});
+});*/
