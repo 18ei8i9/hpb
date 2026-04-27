@@ -39,11 +39,10 @@ roomButtons.forEach((button) => {
 
 
 // ============================================================
-// CHATBOT — Gemini API
+// CHATBOT — via Cloudflare Worker (proxy de Gemini)
 // ============================================================
 
-// ⚠️ IMPORTANTE: no compartas esta key públicamente
-const GEMINI_API_KEY = "AIzaSyDh30mdmefG_vfZM0eAinoemtxYNG4lAVU";
+const WORKER_URL = "https://hpbs.nickenbote.workers.dev/";
 
 const HOTEL_CONTEXT = `
 Sos el asistente virtual del Hotel Puerto Bandera, un hotel 2 estrellas ubicado en Buenos Aires 1020, Rosario, Santa Fe, Argentina.
@@ -72,23 +71,22 @@ RESERVAS:
 - Si alguien quiere reservar, pedile: nombre, fechas y tipo de habitación
 
 REGLAS:
-- Si te preguntan precios en otras monedas, mencioná solo el precio en ARS
+- Respondé preguntas sobre el hotel con la info de arriba
 - Si no sabés algo, invitalos a llamar al hotel
 - Nunca inventes información
+- No menciones el teléfono a menos que sea necesario o te lo pidan
 `;
 
-// Historial de conversación para mantener contexto
 let conversationHistory = [];
 
-// Referencias al DOM
-const chatToggle = document.getElementById('chat-toggle');
-const chatBox    = document.getElementById('chatbot');
-const chatClose  = document.getElementById('chat-close');
-const chatForm   = document.getElementById('chat-form');
-const chatInput  = document.getElementById('chat-input');
+const chatToggle  = document.getElementById('chat-toggle');
+const chatBox     = document.getElementById('chatbot');
+const chatClose   = document.getElementById('chat-close');
+const chatForm    = document.getElementById('chat-form');
+const chatInput   = document.getElementById('chat-input');
 const chatMessages = document.getElementById('chat-messages');
 
-// Abrir / cerrar chat
+// Abrir / cerrar
 chatToggle.addEventListener('click', () => {
   const isHidden = chatBox.classList.toggle('hidden');
   if (!isHidden && conversationHistory.length === 0) {
@@ -107,12 +105,7 @@ function appendMessage(type, html) {
   return p;
 }
 
-// Indicador de "escribiendo..."
-function mostrarTyping() {
-  return appendMessage('bot', '<em style="opacity:.6">Escribiendo...</em>');
-}
-
-// Mensaje de bienvenida con botones rápidos
+// Bienvenida con botones rápidos
 function mostrarBienvenida() {
   appendMessage('bot', '¡Hola! 👋 Soy el asistente del <strong>Hotel Puerto Bandera</strong>. ¿En qué puedo ayudarte?');
 
@@ -124,15 +117,9 @@ function mostrarBienvenida() {
     const btn = document.createElement('button');
     btn.textContent = opcion;
     btn.style.cssText = `
-      background: #ffe8bf;
-      border: 1px solid #c89a3d;
-      color: #3d2a00;
-      border-radius: 999px;
-      padding: 4px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: background .15s;
+      background:#ffe8bf;border:1px solid #c89a3d;color:#3d2a00;
+      border-radius:999px;padding:4px 12px;font-size:12px;cursor:pointer;
+      font-family:'Inter',sans-serif;transition:background .15s;
     `;
     btn.addEventListener('mouseenter', () => btn.style.background = '#ffd98a');
     btn.addEventListener('mouseleave', () => btn.style.background = '#ffe8bf');
@@ -147,27 +134,24 @@ function mostrarBienvenida() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Formulario de captura de lead (reserva)
+// Formulario de reserva
 function mostrarFormularioReserva() {
-  const wrap = document.createElement('div');
-  wrap.style.cssText = `
-    background: #fff8ee;
-    border: 1px solid #c89a3d44;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 4px 0;
+  const inputStyle = `
+    width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:6px;
+    padding:6px 9px;font-size:12.5px;margin-bottom:5px;font-family:'Inter',sans-serif;
   `;
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'background:#fff8ee;border:1px solid #c89a3d44;border-radius:8px;padding:10px;margin:4px 0;';
   wrap.innerHTML = `
     <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#222;">Dejanos tus datos y te contactamos 😊</p>
-    <input id="lead-nombre"  type="text" placeholder="Tu nombre"             style="${inputStyle}">
-    <input id="lead-checkin" type="text" placeholder="Llegada (ej: 15 mayo)" style="${inputStyle}">
-    <input id="lead-checkout"type="text" placeholder="Salida (ej: 18 mayo)"  style="${inputStyle}">
-    <input id="lead-hab"     type="text" placeholder="Habitación (doble / matrimonial / triple)" style="${inputStyle}">
-    <input id="lead-tel"     type="tel"  placeholder="Teléfono o email"       style="${inputStyle}">
-    <button id="lead-enviar" style="
-      width:100%;background:#1d2a36;color:#fff;border:none;
-      border-radius:6px;padding:8px;font-size:13px;cursor:pointer;margin-top:2px;
-    ">Enviar consulta</button>
+    <input id="lead-nombre"   type="text" placeholder="Tu nombre"                          style="${inputStyle}">
+    <input id="lead-checkin"  type="text" placeholder="Llegada (ej: 15 de mayo)"           style="${inputStyle}">
+    <input id="lead-checkout" type="text" placeholder="Salida (ej: 18 de mayo)"            style="${inputStyle}">
+    <input id="lead-hab"      type="text" placeholder="Habitación: doble / matrimonial / triple" style="${inputStyle}">
+    <input id="lead-tel"      type="tel"  placeholder="Teléfono o email de contacto"       style="${inputStyle}">
+    <button id="lead-enviar" style="width:100%;background:#1d2a36;color:#fff;border:none;border-radius:6px;padding:8px;font-size:13px;cursor:pointer;margin-top:2px;font-weight:600;">
+      Enviar consulta
+    </button>
   `;
   chatMessages.appendChild(wrap);
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -186,42 +170,34 @@ function mostrarFormularioReserva() {
 
     wrap.remove();
     appendMessage('bot',
-      `¡Gracias, <strong>${nombre}</strong>! 🎉 Recibimos tu consulta. Te contactamos pronto al <strong>${tel}</strong>. ` +
-      `También podés llamarnos al <a href="tel:+543414400930">+54 341 440 0930</a>.`
+      `¡Gracias, <strong>${nombre}</strong>! 🎉 Recibimos tu consulta. ` +
+      `Te contactamos pronto al <strong>${tel}</strong>. ` +
+      `También podés llamarnos directamente al <a href="tel:+543414400930" style="color:#c89a3d;">+54 341 440 0930</a>.`
     );
 
-    // Log del lead — podés conectar esto a Formspree, EmailJS, etc.
     console.log('LEAD:', { nombre, checkin, checkout, hab, tel });
   });
 }
 
-const inputStyle = `
-  width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:6px;
-  padding:6px 9px;font-size:12.5px;margin-bottom:5px;font-family:'Inter',sans-serif;
-`;
-
-// Llamada a la API de Gemini
+// Llamada al Worker
 async function llamarGemini(mensajeUsuario) {
   conversationHistory.push({
     role: 'user',
     parts: [{ text: mensajeUsuario }]
   });
 
-  const typing = mostrarTyping();
+  const typing = appendMessage('bot', '<em style="opacity:.5">Escribiendo...</em>');
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: HOTEL_CONTEXT }] },
-          contents: conversationHistory,
-          generationConfig: { temperature: 0.65, maxOutputTokens: 300 }
-        })
-      }
-    );
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: HOTEL_CONTEXT }] },
+        contents: conversationHistory,
+        generationConfig: { temperature: 0.65, maxOutputTokens: 300 }
+      })
+    });
 
     const data = await res.json();
 
@@ -238,18 +214,17 @@ async function llamarGemini(mensajeUsuario) {
     typing.innerHTML = respuesta.replace(/\n/g, '<br>');
 
     // Si menciona reserva → mostrar formulario
-    const palabrasReserva = ['reservar', 'reserva', 'quiero una habitación', 'disponibilidad', 'hacer una reserva'];
+    const palabrasReserva = ['reservar', 'reserva', 'habitación', 'disponibilidad', 'quiero quedarme'];
     if (palabrasReserva.some(p => mensajeUsuario.toLowerCase().includes(p))) {
-      setTimeout(mostrarFormularioReserva, 500);
+      setTimeout(mostrarFormularioReserva, 600);
     }
 
   } catch (err) {
-    console.error('Error Gemini:', err);
-    typing.innerHTML = 'Hubo un problema de conexión. Llamanos al <a href="tel:+543414400930">+54 341 440 0930</a>.';
+    console.error('Error:', err);
+    typing.innerHTML = 'Hubo un problema. Llamanos al <a href="tel:+543414400930" style="color:#c89a3d;">+54 341 440 0930</a>.';
   }
 }
 
-// Enviar mensaje desde el formulario
 function enviarMensaje(texto) {
   if (!texto) return;
   appendMessage('user', texto);
